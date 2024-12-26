@@ -1,6 +1,9 @@
-[gd_scene format=3 uid="uid://14pbt6ljfqkd"]
+[gd_scene load_steps=2 format=3 uid="uid://14pbt6ljfqkd"]
+
+[ext_resource type="Script" path="res://Load Screen/load_screen.gd" id="1_x6cf3"]
 
 [node name="Node2D" type="Node2D"]
+script = ExtResource("1_x6cf3")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 layer = 100
