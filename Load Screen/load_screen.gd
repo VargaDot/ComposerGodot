@@ -13,7 +13,7 @@ func loading_finished(_scene: Resource) -> void:
 	set_process(true)
 	print("Finished")
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("activate"):
 		Composer.finished_loading_for_scene.emit()
 		queue_free()
