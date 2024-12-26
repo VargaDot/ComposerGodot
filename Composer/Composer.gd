@@ -1,14 +1,18 @@
 extends Node
 
 signal started_loading(path: String)
+
 signal invalid_scene(path: String)
 signal failed_loading(path: String)
-signal finished_loading(scene: Resource)
 
 signal updated_loading(path: String, progress: int)
 
+signal finished_loading(scene: Resource)
+signal finished_loading_for_scene()
+
 var _loading_timer: Timer
 var _current_loading_path: String
+var _current_load_settings: LoadSettings
 
 func _ready() -> void:
 	invalid_scene.connect(_on_invalid_scene)
@@ -17,13 +21,15 @@ func _ready() -> void:
 
 	_setup_timer()
 
-func load(path: String) -> void:
+func load(path: String, load_settings: LoadSettings = null) -> void:
 	var loader: Error = ResourceLoader.load_threaded_request(path)
 	if not ResourceLoader.exists(path) or loader == null:
 		invalid_scene.emit(path)
 		return
 
 	if _loading_timer == null: _setup_timer()
+
+	if load_settings != null: _setup_load(load_settings)
 
 	_current_loading_path = path
 	_loading_timer.start()
@@ -56,6 +62,15 @@ func _setup_timer() -> void:
 	_loading_timer.timeout.connect(check_loading_status)
 	get_tree().root.call_deferred("add_child",_loading_timer)
 
+func _setup_load(load_settings: LoadSettings) -> void:
+	_current_load_settings = load_settings
+
+	var screen: Node = _current_load_settings.loading_screen.instantiate()
+	finished_loading.connect(_current_load_settings.load_screen_event)
+
+	get_tree().root.call_deferred("add_child",screen)
+	get_tree().root.call_deferred("move_child",screen, get_child_count()-1)
+
 func _on_invalid_scene(path: String) -> void:
 	printerr("Error: Invalid resource: " + path)
 
@@ -67,5 +82,12 @@ func _on_finished_loading(scene: PackedScene) -> void:
 
 	var new_scene: Node = scene.instantiate()
 
+	if _current_load_settings != null:
+		new_scene.hide()
+		new_scene.process_mode = Node.PROCESS_MODE_DISABLED
+
 	get_tree().root.call_deferred("add_child", new_scene)
 	get_tree().set_deferred("current_scene", new_scene)
+
+	finished_loading_for_scene.emit()
+	_current_load_settings = null
