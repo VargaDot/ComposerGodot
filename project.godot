@@ -11,8 +11,17 @@ config_version=5
 [application]
 
 config/name="ComposerRevamp"
+run/main_scene="res://Menu/menu.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
 config/icon="res://icon.svg"
+
+[autoload]
+
+Composer="*res://Composer/Composer.gd"
+
+[debug]
+
+gdscript/warnings/untyped_declaration=2
 
 [rendering]
 
