@@ -1,16 +1,16 @@
-extends Node2D
+extends Control
 
-@onready var load_screen: String = "res://Load Screen/LoadScreen.tscn"
-@onready var fade_load_screen: String = "res://LoadScreenFade/FadeLoadScreen.tscn"
+var load_screen: String
+var fade_load_screen: String
 
 func _ready() -> void:
+	load_screen = "res://Load Screen/LoadScreen.tscn"
+	fade_load_screen = "res://LoadScreenFade/FadeLoadScreen.tscn"
 	hide()
-	$CanvasLayer.hide()
 	process_mode = Node.PROCESS_MODE_DISABLED
 
 func on_loading_activated() -> void:
 	show()
-	$CanvasLayer.show()
 	process_mode = Node.PROCESS_MODE_INHERIT
 
 func _on_menu_button_pressed() -> void:
