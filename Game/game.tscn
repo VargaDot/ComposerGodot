@@ -6,7 +6,6 @@
 script = ExtResource("1_k467b")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
-visible = false
 
 [node name="Control" type="Control" parent="CanvasLayer"]
 layout_mode = 3
@@ -38,6 +37,7 @@ offset_right = 49.5
 offset_bottom = 15.5
 grow_horizontal = 2
 grow_vertical = 2
+focus_mode = 0
 text = "Go to Menu"
 
 [connection signal="pressed" from="CanvasLayer/Control/GameButton" to="." method="_on_game_button_pressed"]

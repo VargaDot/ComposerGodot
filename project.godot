@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="ComposerRevamp"
-run/main_scene="res://Menu/menu.tscn"
+run/main_scene="res://Startup/Startup.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
 config/icon="res://icon.svg"
 
