@@ -15,9 +15,9 @@ func on_loading_activated() -> void:
 
 func _on_menu_button_pressed() -> void:
 	Composer.setup_load_screen(load_screen)
-	Composer.load("res://Game/game.tscn")
+	Composer.load_scene("res://Game/game.tscn")
 
 func _on_fade_menu_button_pressed() -> void:
 	var loading_screen: Node = Composer.setup_load_screen(fade_load_screen)
 	await loading_screen.finished_fade_in
-	Composer.load("res://Game/game.tscn")
+	Composer.load_scene("res://Game/game.tscn")

@@ -1,12 +1,21 @@
 extends Node
 
+## Emitted when Composer has been fully initialised, alongside with its timer.
 signal finished_initialising()
 
+## Emitted when provided scene has been invalid (may not exist or path is invalid).
 signal invalid_scene(path: String)
+
+## Emitted when ResourceLoader failed to load the scene.
 signal failed_loading(path: String)
+
+## Emitted every 0.1s during loading to provide progress for loading bars.
 signal updated_loading(path: String, progress: int)
+
+## Emitted when the scene has finished loading.
 signal finished_loading(scene: Node)
 
+## A signal to be used with loading screens, for scene activation (i.e making scene visible or activating certain game logic)
 signal loading_activated()
 
 var has_initialized: bool = false:
@@ -29,7 +38,8 @@ func _enter_tree() -> void:
 
 	_setup_timer()
 
-func load(path_to_scene: String) -> void:
+## Starts the loading of the scene from given path.
+func load_scene(path_to_scene: String) -> void:
 	if _is_loading: return
 
 	if !has_initialized: await finished_initialising
@@ -38,7 +48,7 @@ func load(path_to_scene: String) -> void:
 	if not ResourceLoader.exists(path_to_scene) or loader == null:
 		invalid_scene.emit(path_to_scene)
 		return
-	print("Started loading")
+
 	_is_loading = true
 
 	if _loading_timer == null: _setup_timer()
@@ -48,6 +58,7 @@ func load(path_to_scene: String) -> void:
 	_current_loading_path = path_to_scene
 	_loading_timer.start()
 
+## Loads and shows the loading screen which it returns after successful instatiation to the SceneTree.
 func setup_load_screen(path_to_load_screen: String) -> Node:
 	if _has_loading_screen: return
 
@@ -59,12 +70,13 @@ func setup_load_screen(path_to_load_screen: String) -> Node:
 
 	return _current_load_screen
 
+## Gets rid of the loading screen
 func clear_load_screen() -> void:
 	_current_load_screen.queue_free()
 	_current_load_screen = null
 	_has_loading_screen = false
 
-func check_loading_status() -> void:
+func _check_loading_status() -> void:
 	var load_progress: Array = []
 	var load_status: ResourceLoader.ThreadLoadStatus = ResourceLoader.load_threaded_get_status(_current_loading_path, load_progress)
 
@@ -87,7 +99,7 @@ func _setup_timer() -> void:
 	_loading_timer = Timer.new()
 	_loading_timer.name = "LoadingTimer"
 	_loading_timer.wait_time = 0.1
-	_loading_timer.timeout.connect(check_loading_status)
+	_loading_timer.timeout.connect(_check_loading_status)
 	get_tree().root.call_deferred("add_child",_loading_timer)
 
 	await _loading_timer.ready
