@@ -1,17 +1,15 @@
 extends Node
 
 signal started_loading(path: String)
-
 signal invalid_scene(path: String)
 signal failed_loading(path: String)
 signal updated_loading(path: String, progress: int)
+signal finished_loading(scene: Node)
 
-signal finished_loading(scene: Resource)
-signal finished_loading_for_scene()
+var _is_loading: bool = false
 
 var _loading_timer: Timer = null
 var _current_loading_path: String = ""
-var _current_load_settings: LoadSettings = null
 var _current_load_screen: Node = null
 
 func _ready() -> void:
@@ -21,22 +19,36 @@ func _ready() -> void:
 
 	_setup_timer()
 
-func load(path: String, load_settings: LoadSettings = null) -> void:
-	var loader: Error = ResourceLoader.load_threaded_request(path)
-	if not ResourceLoader.exists(path) or loader == null:
-		invalid_scene.emit(path)
+func load(path_to_scene: String) -> void:
+	if _is_loading: return
+
+	var loader: Error = ResourceLoader.load_threaded_request(path_to_scene)
+	if not ResourceLoader.exists(path_to_scene) or loader == null:
+		invalid_scene.emit(path_to_scene)
 		return
+
+	_is_loading = true
 
 	if _loading_timer == null: _setup_timer()
 
-	if load_settings != null: _setup_load(load_settings)
-
 	get_tree().current_scene.queue_free()
 
-	_current_loading_path = path
+	_current_loading_path = path_to_scene
 	_loading_timer.start()
 
 	started_loading.emit(_current_loading_path)
+
+func setup_load_screen(path_to_load_screen: String) -> Node:
+	_current_load_screen = load(path_to_load_screen).instantiate()
+
+	get_tree().root.call_deferred("add_child",_current_load_screen)
+	get_tree().root.call_deferred("move_child",_current_load_screen, get_child_count()-1)
+
+	return _current_load_screen
+
+func clear_load_screen() -> void:
+	_current_load_screen.queue_free()
+	_current_load_screen = null
 
 func check_loading_status() -> void:
 	var load_progress: Array = []
@@ -55,7 +67,7 @@ func check_loading_status() -> void:
 			updated_loading.emit(_current_loading_path, int(load_progress[0] * 100))
 		ResourceLoader.THREAD_LOAD_LOADED:
 			_loading_timer.stop()
-			finished_loading.emit(ResourceLoader.load_threaded_get(_current_loading_path))
+			finished_loading.emit(ResourceLoader.load_threaded_get(_current_loading_path).instantiate())
 
 func _setup_timer() -> void:
 	_loading_timer = Timer.new()
@@ -64,37 +76,15 @@ func _setup_timer() -> void:
 	_loading_timer.timeout.connect(check_loading_status)
 	get_tree().root.call_deferred("add_child",_loading_timer)
 
-func _setup_load(load_settings: LoadSettings) -> void:
-	_current_load_settings = load_settings
+func _on_finished_loading(scene: Node) -> void:
+	get_tree().root.call_deferred("add_child", scene)
+	get_tree().set_deferred("current_scene", scene)
 
-	_current_load_screen = load(_current_load_settings.loading_screen).instantiate()
-	updated_loading.connect(Callable(_current_load_screen, _current_load_settings.load_screen_update_func))
-	finished_loading.connect(Callable(_current_load_screen, _current_load_settings.load_screen_finsh_func))
-
-	get_tree().root.call_deferred("add_child",_current_load_screen)
-	get_tree().root.call_deferred("move_child",_current_load_screen, get_child_count()-1)
+	_current_loading_path = ""
+	_is_loading = false
 
 func _on_invalid_scene(path: String) -> void:
 	printerr("Error: Invalid resource: " + path)
 
 func _on_failed_loading(path: String) -> void:
 	printerr("Error: Failed to load resource: " + path)
-
-func _on_finished_loading(scene: PackedScene) -> void:
-	var new_scene: Node = scene.instantiate()
-
-	if _current_load_settings != null:
-		new_scene.hide()
-		new_scene.process_mode = Node.PROCESS_MODE_DISABLED
-		finished_loading_for_scene.connect(Callable(new_scene, _current_load_settings.loaded_scene_start_func))
-
-		if _current_load_settings.call_finished_for_scene:
-			finished_loading_for_scene.emit()
-			_current_load_screen.queue_free()
-
-	get_tree().root.call_deferred("add_child", new_scene)
-	get_tree().set_deferred("current_scene", new_scene)
-
-	_current_load_settings = null
-	_current_load_screen = null
-	_current_loading_path = ""

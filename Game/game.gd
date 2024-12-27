@@ -1,6 +1,11 @@
 class_name Game extends Node2D
 
-func on_loading_finished() -> void:
+func _ready() -> void:
+	hide()
+	$CanvasLayer.hide()
+	process_mode = Node.PROCESS_MODE_DISABLED
+
+func on_loading_activated() -> void:
 	show()
 	$CanvasLayer.show()
 	process_mode = Node.PROCESS_MODE_INHERIT

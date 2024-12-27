@@ -1,15 +1,16 @@
 extends Node2D
 
 @onready var load_screen: String = "res://Load Screen/LoadScreen.tscn"
-var load_settings: LoadSettings
+@onready var fade_load_screen: String = "res://LoadScreenFade/FadeLoadScreen.tscn"
 
-func _ready() -> void:
-	load_settings = LoadSettings.new()
-	load_settings.loading_screen = load_screen
-	load_settings.load_screen_update_func = "update_load_screen"
-	load_settings.load_screen_finsh_func = "loading_finished"
-	load_settings.loaded_scene_start_func = "on_loading_finished"
-
+var loading_screen: Node
 
 func _on_menu_button_pressed() -> void:
-	Composer.load("res://Game/game.tscn", load_settings)
+	loading_screen = Composer.setup_load_screen(load_screen)
+	Composer.load("res://Game/game.tscn")
+
+
+func _on_fade_menu_button_pressed() -> void:
+	loading_screen = Composer.setup_load_screen(fade_load_screen)
+	await loading_screen.finished_fade_in
+	Composer.load("res://Game/game.tscn")
