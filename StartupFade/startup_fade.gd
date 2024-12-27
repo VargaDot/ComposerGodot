@@ -9,7 +9,7 @@ func _ready() -> void:
 		await Composer.finished_initialising
 	print("load")
 	Composer.finished_loading.connect(on_finished_loading)
-	Composer.load("res://Menu/menu.tscn")
+	Composer.load_scene("res://Menu/menu.tscn")
 
 func on_finished_loading(scene: Node) -> void:
 	_scene = scene

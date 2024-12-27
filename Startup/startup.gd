@@ -7,4 +7,4 @@ func _ready() -> void:
 		await Composer.finished_initialising
 
 	Composer.setup_load_screen("res://StartupFade/StartupFade.tscn")
-	Composer.load("res://Menu/menu.tscn")
+	Composer.load_scene("res://Menu/menu.tscn")
