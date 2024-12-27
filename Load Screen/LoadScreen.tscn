@@ -44,4 +44,4 @@ offset_right = 105.5
 offset_bottom = 61.5
 grow_horizontal = 2
 grow_vertical = 2
-text = "Press ENTER to continue..."
+text = "Press any key to continue..."
