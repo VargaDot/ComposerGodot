@@ -1,5 +1,7 @@
 extends Node2D
 
+var _scene: Node
+
 func _ready() -> void:
 	set_process(false)
 
@@ -10,7 +12,8 @@ func _ready() -> void:
 	Composer.load("res://Menu/menu.tscn")
 
 func on_finished_loading(scene: Node) -> void:
-	Composer.loading_activated.connect(scene.on_loading_activated)
+	_scene = scene
+	Composer.loading_activated.connect(_scene.on_loading_activated)
 	$CanvasLayer/LoadScreen/FinishedLabel.show()
 	$CanvasLayer/LoadScreen/FinishedLabel/AnimationPlayer.play("FadeInOut")
 	set_process(true)
@@ -23,9 +26,10 @@ func fade_out() -> void:
 		Composer.clear_load_screen()
 	)
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("activate"):
+		set_process(false)
 		$CanvasLayer/LoadScreen/FinishedLabel.hide()
 		Composer.loading_activated.emit()
+		Composer.loading_activated.disconnect(_scene.on_loading_activated)
 		fade_out()
-		set_process(false)

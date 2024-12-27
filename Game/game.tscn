@@ -37,6 +37,7 @@ offset_right = 49.5
 offset_bottom = 15.5
 grow_horizontal = 2
 grow_vertical = 2
+focus_mode = 0
 text = "Go to Menu"
 
 [connection signal="pressed" from="CanvasLayer/Control/GameButton" to="." method="_on_game_button_pressed"]

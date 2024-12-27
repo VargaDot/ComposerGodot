@@ -16,6 +16,7 @@ var has_initialized: bool = false:
 			finished_initialising.emit()
 
 var _is_loading: bool = false
+var _has_loading_screen: bool = false
 
 var _loading_timer: Timer = null
 var _current_loading_path: String = ""
@@ -37,7 +38,7 @@ func load(path_to_scene: String) -> void:
 	if not ResourceLoader.exists(path_to_scene) or loader == null:
 		invalid_scene.emit(path_to_scene)
 		return
-
+	print("Started loading")
 	_is_loading = true
 
 	if _loading_timer == null: _setup_timer()
@@ -48,6 +49,9 @@ func load(path_to_scene: String) -> void:
 	_loading_timer.start()
 
 func setup_load_screen(path_to_load_screen: String) -> Node:
+	if _has_loading_screen: return
+
+	_has_loading_screen = true
 	_current_load_screen = load(path_to_load_screen).instantiate()
 
 	get_tree().root.call_deferred("add_child",_current_load_screen)
@@ -58,6 +62,7 @@ func setup_load_screen(path_to_load_screen: String) -> Node:
 func clear_load_screen() -> void:
 	_current_load_screen.queue_free()
 	_current_load_screen = null
+	_has_loading_screen = false
 
 func check_loading_status() -> void:
 	var load_progress: Array = []
