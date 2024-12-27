@@ -24,6 +24,7 @@ signal finished_loading(scene: Node)
 ##@experimental: A signal to be used with loading screens, for scene activation (i.e making scene visible or activating certain game logic)
 signal loading_activated()
 
+## Tracks if composer finished setting itself up
 var has_initialized: bool = false:
 	set(val):
 		has_initialized = val
