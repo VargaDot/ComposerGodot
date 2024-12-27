@@ -36,12 +36,14 @@ var _has_loading_screen: bool = false
 var _loading_timer: Timer = null
 var _current_loading_path: String = ""
 var _current_load_screen: Node = null
+var _root: Node
 
 func _enter_tree() -> void:
 	invalid_scene.connect(_on_invalid_scene)
 	failed_loading.connect(_on_failed_loading)
 	finished_loading.connect(_on_finished_loading)
 
+	_root = get_tree().root
 	_setup_timer()
 
 ## Starts the loading of the scene from given path.
@@ -71,8 +73,8 @@ func setup_load_screen(path_to_load_screen: String) -> Node:
 	_has_loading_screen = true
 	_current_load_screen = load(path_to_load_screen).instantiate()
 
-	get_tree().root.call_deferred("add_child",_current_load_screen)
-	get_tree().root.call_deferred("move_child",_current_load_screen, get_child_count()-1)
+	_root.call_deferred("add_child",_current_load_screen)
+	_root.call_deferred("move_child",_current_load_screen, get_child_count()-1)
 
 	return _current_load_screen
 
@@ -106,14 +108,14 @@ func _setup_timer() -> void:
 	_loading_timer.name = "LoadingTimer"
 	_loading_timer.wait_time = 0.1
 	_loading_timer.timeout.connect(_check_loading_status)
-	get_tree().root.call_deferred("add_child",_loading_timer)
+	_root.call_deferred("add_child",_loading_timer)
 
 	await _loading_timer.ready
 
 	_has_initialized = true
 
 func _on_finished_loading(scene: Node) -> void:
-	get_tree().root.call_deferred("add_child", scene)
+	_root.call_deferred("add_child", scene)
 	get_tree().set_deferred("current_scene", scene)
 
 	_current_loading_path = ""
