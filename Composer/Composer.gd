@@ -24,10 +24,10 @@ signal finished_loading(scene: Node)
 ##@experimental: A signal to be used with loading screens, for scene activation (i.e making scene visible or activating certain game logic)
 signal loading_activated()
 
-var _has_initialized: bool = false:
+var has_initialized: bool = false:
 	set(val):
-		_has_initialized = val
-		if _has_initialized:
+		has_initialized = val
+		if has_initialized:
 			finished_initialising.emit()
 
 var _is_loading: bool = false
@@ -50,7 +50,7 @@ func _enter_tree() -> void:
 func load_scene(path_to_scene: String) -> void:
 	if _is_loading: return
 
-	if !_has_initialized: await finished_initialising
+	if !has_initialized: await finished_initialising
 
 	var loader: Error = ResourceLoader.load_threaded_request(path_to_scene)
 	if not ResourceLoader.exists(path_to_scene) or loader == null:
@@ -112,7 +112,7 @@ func _setup_timer() -> void:
 
 	await _loading_timer.ready
 
-	_has_initialized = true
+	has_initialized = true
 
 func _on_finished_loading(scene: Node) -> void:
 	_root.call_deferred("add_child", scene)
