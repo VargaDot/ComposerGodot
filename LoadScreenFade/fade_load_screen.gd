@@ -1,7 +1,6 @@
 extends Node2D
 
 signal finished_fade_in
-signal loading_activated
 
 var _fade_tween: Tween
 
@@ -33,13 +32,14 @@ func load_screen_fade_out() -> void:
 	)
 
 func loading_finished(scene: Node) -> void:
-	loading_activated.connect(scene.on_loading_activated)
+	Composer.loading_activated.connect(scene.on_loading_activated)
 	$CanvasLayer/LoadScreen/FinishedLabel.show()
+	$CanvasLayer/LoadScreen/FinishedLabel/AnimationPlayer.play("FadeInOut")
 	set_process(true)
 	print("Finished")
 
 func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("activate"):
-		loading_activated.emit()
-		load_screen_fade_out()
 		set_process(false)
+		Composer.loading_activated.emit()
+		load_screen_fade_out()

@@ -1,10 +1,19 @@
 extends Node
 
-signal started_loading(path: String)
+signal finished_initialising()
+
 signal invalid_scene(path: String)
 signal failed_loading(path: String)
 signal updated_loading(path: String, progress: int)
 signal finished_loading(scene: Node)
+
+signal loading_activated()
+
+var has_initialized: bool = false:
+	set(val):
+		has_initialized = val
+		if has_initialized:
+			finished_initialising.emit()
 
 var _is_loading: bool = false
 
@@ -12,7 +21,7 @@ var _loading_timer: Timer = null
 var _current_loading_path: String = ""
 var _current_load_screen: Node = null
 
-func _ready() -> void:
+func _enter_tree() -> void:
 	invalid_scene.connect(_on_invalid_scene)
 	failed_loading.connect(_on_failed_loading)
 	finished_loading.connect(_on_finished_loading)
@@ -21,6 +30,8 @@ func _ready() -> void:
 
 func load(path_to_scene: String) -> void:
 	if _is_loading: return
+
+	if !has_initialized: await finished_initialising
 
 	var loader: Error = ResourceLoader.load_threaded_request(path_to_scene)
 	if not ResourceLoader.exists(path_to_scene) or loader == null:
@@ -35,8 +46,6 @@ func load(path_to_scene: String) -> void:
 
 	_current_loading_path = path_to_scene
 	_loading_timer.start()
-
-	started_loading.emit(_current_loading_path)
 
 func setup_load_screen(path_to_load_screen: String) -> Node:
 	_current_load_screen = load(path_to_load_screen).instantiate()
@@ -75,6 +84,10 @@ func _setup_timer() -> void:
 	_loading_timer.wait_time = 0.1
 	_loading_timer.timeout.connect(check_loading_status)
 	get_tree().root.call_deferred("add_child",_loading_timer)
+
+	await _loading_timer.ready
+
+	has_initialized = true
 
 func _on_finished_loading(scene: Node) -> void:
 	get_tree().root.call_deferred("add_child", scene)

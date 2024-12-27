@@ -1,6 +1,6 @@
-[gd_scene load_steps=5 format=3 uid="uid://c8lb8uqvt1i1g"]
+[gd_scene load_steps=5 format=3 uid="uid://dtto5wmlevne7"]
 
-[ext_resource type="Script" path="res://LoadScreenFade/fade_load_screen.gd" id="1_3b66p"]
+[ext_resource type="Script" path="res://StartupFade/startup_fade.gd" id="1_awal7"]
 
 [sub_resource type="Animation" id="Animation_jqe41"]
 resource_name = "FadeInOut"
@@ -40,8 +40,8 @@ _data = {
 "RESET": SubResource("Animation_lo41o")
 }
 
-[node name="FadeLoadScreen" type="Node2D"]
-script = ExtResource("1_3b66p")
+[node name="StartupFade" type="Node2D"]
+script = ExtResource("1_awal7")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 layer = 100
@@ -55,7 +55,6 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="FadeRect" type="ColorRect" parent="CanvasLayer/LoadScreen"]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
