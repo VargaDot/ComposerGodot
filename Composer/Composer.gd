@@ -1,5 +1,11 @@
 extends Node
 
+## A Scene Manager
+##
+## This script serves as a Scene Manager for managing the loading and unloading of game scenes (levels) in Godot.
+## It handles asynchronous scene loading, displays loading screens, and emits various signals to inform other parts
+## of the game about the loading process.
+
 ## Emitted when Composer has been fully initialised, alongside with its timer.
 signal finished_initialising()
 
