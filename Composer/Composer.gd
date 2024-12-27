@@ -15,7 +15,7 @@ signal updated_loading(path: String, progress: int)
 ## Emitted when the scene has finished loading.
 signal finished_loading(scene: Node)
 
-## A signal to be used with loading screens, for scene activation (i.e making scene visible or activating certain game logic)
+##@experimental: A signal to be used with loading screens, for scene activation (i.e making scene visible or activating certain game logic)
 signal loading_activated()
 
 var has_initialized: bool = false:
