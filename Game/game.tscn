@@ -2,20 +2,16 @@
 
 [ext_resource type="Script" path="res://Game/game.gd" id="1_k467b"]
 
-[node name="Game" type="Node2D"]
-script = ExtResource("1_k467b")
-
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-
-[node name="Control" type="Control" parent="CanvasLayer"]
+[node name="Game" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_k467b")
 
-[node name="Label" type="Label" parent="CanvasLayer/Control"]
+[node name="Label" type="Label" parent="."]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -24,7 +20,7 @@ grow_horizontal = 2
 text = "Game Test"
 horizontal_alignment = 1
 
-[node name="GameButton" type="Button" parent="CanvasLayer/Control"]
+[node name="GameButton" type="Button" parent="."]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -40,4 +36,4 @@ grow_vertical = 2
 focus_mode = 0
 text = "Go to Menu"
 
-[connection signal="pressed" from="CanvasLayer/Control/GameButton" to="." method="_on_game_button_pressed"]
+[connection signal="pressed" from="GameButton" to="." method="_on_game_button_pressed"]
