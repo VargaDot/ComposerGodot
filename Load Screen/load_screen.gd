@@ -19,7 +19,7 @@ func loading_finished(scene: Node) -> void:
 	set_process(true)
 	print("Finished")
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("activate"):
 		loading_activated.emit()
 		Composer.clear_load_screen()
