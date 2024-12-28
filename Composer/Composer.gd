@@ -2,8 +2,8 @@ extends Node
 
 ## A Scene Manager
 ##
-## Composer's main function is to replace the current scene with a new scene, while granting
-## the option to have a loading screen.
+## Composer aims to replace the current scene with a new scene, while granting
+## the option to have a loading screen and the transfer of data between scenes.
 
 ## Emitted when Composer has been fully initialised, alongside with its timer.
 signal finished_initialising()
@@ -20,21 +20,22 @@ signal updated_loading(path: String, progress: int)
 ## Emitted when the scene has finished loading.
 signal finished_loading(scene: Node, data: Dictionary)
 
-## @experimental:
 ## Use with loading screens, for scene activation (i.e making scene visible or activating certain game logic)
 @warning_ignore("unused_signal")
 signal loading_activated()
 
-## Tracks if composer finished setting itself up
+## Tracks if composer finished initializing; i.e when its ready to use.
 var has_initialized: bool = false:
 	set(val):
 		has_initialized = val
 		if has_initialized:
 			finished_initialising.emit()
 
-## Used in load_scene function, refer to ResourceLoader's load_threaded_request docs for detail
+## Enables or disables the use of subthreads when loading scenes,
+## refer to [method ResourceLoader.load_threaded_request] for detail
 var is_using_subthreads: bool = false
-## Used in load_scene function, refer to ResourceLoader's load_threaded_request docs for detail
+## Sets the cache mode of loaded scenes,
+## refer to [method ResourceLoader.load_threaded_request] for detail
 var cache_mode: ResourceLoader.CacheMode = ResourceLoader.CACHE_MODE_REUSE
 
 var _is_loading: bool = false
@@ -55,7 +56,9 @@ func _enter_tree() -> void:
 	_root = get_tree().root
 	_setup_timer()
 
-## Replaces the current scene with a new scene using a path
+## Replaces the current scene with a new scene using a path,
+## can also be used for transferring data between scenes with the optional data_to_transfer
+## parameter. Data will be stored as new scene metadata, named "transferred_data".
 func load_scene(path_to_scene: String, data_to_transfer: Dictionary = {}) -> void:
 	if _is_loading: return
 
@@ -77,6 +80,7 @@ func load_scene(path_to_scene: String, data_to_transfer: Dictionary = {}) -> voi
 	_loading_timer.start()
 
 ## Creates a loading screen using a path and adds it to the SceneTree.
+## Returns an instance of it for usage with signals
 func setup_load_screen(path_to_load_screen: String) -> Node:
 	if _has_loading_screen: return
 
@@ -88,7 +92,7 @@ func setup_load_screen(path_to_load_screen: String) -> Node:
 
 	return _current_load_screen
 
-## Removes the loading screen
+## Gets rid of the loading screen
 func clear_load_screen() -> void:
 	_current_load_screen.queue_free()
 	_current_load_screen = null
