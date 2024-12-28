@@ -19,7 +19,7 @@ signal failed_loading(path: String)
 signal updated_loading(path: String, progress: int)
 
 ## Emitted when the scene has finished loading.
-signal finished_loading(scene: Node)
+signal finished_loading(scene: Node, data: Dictionary)
 
 ##@experimental: A signal to be used with loading screens, for scene activation (i.e making scene visible or activating certain game logic)
 signal loading_activated()
@@ -31,6 +31,9 @@ var has_initialized: bool = false:
 		if has_initialized:
 			finished_initialising.emit()
 
+var is_using_subthreads: bool = false
+var cache_mode: ResourceLoader.CacheMode = ResourceLoader.CACHE_MODE_REUSE
+
 var _is_loading: bool = false
 var _has_loading_screen: bool = false
 
@@ -38,6 +41,8 @@ var _loading_timer: Timer = null
 var _current_loading_path: String = ""
 var _current_load_screen: Node = null
 var _root: Node
+
+var _current_data: Dictionary = {}
 
 func _enter_tree() -> void:
 	invalid_scene.connect(_on_invalid_scene)
@@ -48,12 +53,12 @@ func _enter_tree() -> void:
 	_setup_timer()
 
 ## Starts the loading of the scene from given path.
-func load_scene(path_to_scene: String) -> void:
+func load_scene(path_to_scene: String, data_to_transfer: Dictionary = {}) -> void:
 	if _is_loading: return
 
 	if !has_initialized: await finished_initialising
 
-	var loader: Error = ResourceLoader.load_threaded_request(path_to_scene)
+	var loader: Error = ResourceLoader.load_threaded_request(path_to_scene, "", is_using_subthreads, cache_mode)
 	if not ResourceLoader.exists(path_to_scene) or loader == null:
 		invalid_scene.emit(path_to_scene)
 		return
@@ -65,6 +70,7 @@ func load_scene(path_to_scene: String) -> void:
 	get_tree().current_scene.queue_free()
 
 	_current_loading_path = path_to_scene
+	_current_data = data_to_transfer
 	_loading_timer.start()
 
 ## Loads and shows the loading screen which it returns after successful instatiation to the SceneTree.
@@ -102,7 +108,7 @@ func _check_loading_status() -> void:
 			updated_loading.emit(_current_loading_path, int(load_progress[0] * 100))
 		ResourceLoader.THREAD_LOAD_LOADED:
 			_loading_timer.stop()
-			finished_loading.emit(ResourceLoader.load_threaded_get(_current_loading_path).instantiate())
+			finished_loading.emit(ResourceLoader.load_threaded_get(_current_loading_path).instantiate(), _current_data)
 
 func _setup_timer() -> void:
 	_loading_timer = Timer.new()
@@ -115,12 +121,13 @@ func _setup_timer() -> void:
 
 	has_initialized = true
 
-func _on_finished_loading(scene: Node) -> void:
+func _on_finished_loading(scene: Node, transferred_data: Dictionary) -> void:
 	_root.call_deferred("add_child", scene)
 	get_tree().set_deferred("current_scene", scene)
 
 	_current_loading_path = ""
 	_is_loading = false
+	_current_data = {}
 
 func _on_invalid_scene(path: String) -> void:
 	printerr("Error: Invalid resource: " + path)
