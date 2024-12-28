@@ -5,6 +5,8 @@ var _scene: Node
 func _ready() -> void:
 	set_process(false)
 
+	if not Composer.has_initialized:
+		await Composer.finished_initialising
 	print("load")
 	Composer.finished_loading.connect(on_finished_loading)
 	Composer.load_scene("res://Menu/menu.tscn")

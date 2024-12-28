@@ -2,8 +2,9 @@ extends Node
 
 ## A Scene Manager
 ##
-## Composer's main function is to replace the current scene with a new scene, while granting
-## the option to have a loading screen.
+## This script serves as a Scene Manager for managing the loading and unloading of game scenes (levels) in Godot.
+## It handles asynchronous scene loading, displays loading screens, and emits various signals to inform other parts
+## of the game about the loading process.
 
 ## Emitted when Composer has been fully initialised, alongside with its timer.
 signal finished_initialising()
@@ -25,23 +26,20 @@ signal finished_loading(scene: Node, data: Dictionary)
 @warning_ignore("unused_signal")
 signal loading_activated()
 
-## Used in load_scene function, refer to ResourceLoader's load_threaded_request docs for detail
+## Tracks if composer finished setting itself up
+var has_initialized: bool = false:
+	set(val):
+		has_initialized = val
+		if has_initialized:
+			finished_initialising.emit()
+
+## Parameter in load_scene function, refer to ResourceLoader's load_threaded_request docs for detail
 var is_using_subthreads: bool = false
-## Used in load_scene function, refer to ResourceLoader's load_threaded_request docs for detail
+## Parameter in load_scene function, refer to ResourceLoader's load_threaded_request docs for detail
 var cache_mode: ResourceLoader.CacheMode = ResourceLoader.CACHE_MODE_REUSE
 
-## The current state composer is in.
-var current_state: int = STATES.INITIALISING
-## Possible states.
-enum STATES
-{
-	## Composer is setting itself up.
-	INITIALISING = -1,
-	## Composer is doing nothing.
-	IDLE = 0,
-	## Composer is either creating a loading screen, clearing one, or loading a scene.
-	WORKING = 1
-}
+var _is_loading: bool = false
+var _has_loading_screen: bool = false
 
 var _loading_timer: Timer = null
 var _current_loading_path: String = ""
@@ -58,17 +56,20 @@ func _enter_tree() -> void:
 	_root = get_tree().root
 	_setup_timer()
 
-## Replaces the current scene with a new scene using a path
+## Starts the loading of the scene from given path.
 func load_scene(path_to_scene: String, data_to_transfer: Dictionary = {}) -> void:
-	if current_state == STATES.INITIALISING: await finished_initialising
-	if current_state != STATES.IDLE: return
+	if _is_loading: return
 
-	current_state = STATES.WORKING
+	if !has_initialized: await finished_initialising
 
 	var loader: Error = ResourceLoader.load_threaded_request(path_to_scene, "", is_using_subthreads, cache_mode)
 	if not ResourceLoader.exists(path_to_scene) or loader == null:
 		invalid_scene.emit(path_to_scene)
 		return
+
+	_is_loading = true
+
+	if _loading_timer == null: _setup_timer()
 
 	get_tree().current_scene.queue_free()
 
@@ -76,27 +77,23 @@ func load_scene(path_to_scene: String, data_to_transfer: Dictionary = {}) -> voi
 	_current_data = data_to_transfer
 	_loading_timer.start()
 
-## Creates a loading screen using a path and adds it to the SceneTree.
+## Loads and shows the loading screen which it returns after successful instatiation to the SceneTree.
 func setup_load_screen(path_to_load_screen: String) -> Node:
-	if current_state != STATES.IDLE: return
+	if _has_loading_screen: return
 
-	current_state = STATES.WORKING
-
+	_has_loading_screen = true
 	_current_load_screen = load(path_to_load_screen).instantiate()
+
 	_root.call_deferred("add_child",_current_load_screen)
 	_root.call_deferred("move_child",_current_load_screen, get_child_count()-1)
-	
-	current_state = STATES.IDLE
+
 	return _current_load_screen
 
-## Removes the loading screen
+## Gets rid of the loading screen
 func clear_load_screen() -> void:
-	if current_state != STATES.IDLE: return
-
-	current_state = STATES.WORKING
 	_current_load_screen.queue_free()
 	_current_load_screen = null
-	current_state = STATES.IDLE
+	_has_loading_screen = false
 
 func _check_loading_status() -> void:
 	var load_progress: Array = []
@@ -126,16 +123,15 @@ func _setup_timer() -> void:
 
 	await _loading_timer.ready
 
-	current_state = STATES.IDLE
-	finished_initialising.emit()
+	has_initialized = true
 
 func _on_finished_loading(scene: Node, _transferred_data: Dictionary) -> void:
 	_root.call_deferred("add_child", scene)
 	get_tree().set_deferred("current_scene", scene)
 
 	_current_loading_path = ""
+	_is_loading = false
 	_current_data = {}
-	current_state = STATES.IDLE
 
 func _on_invalid_scene(path: String) -> void:
 	printerr("Error: Invalid resource: " + path)
