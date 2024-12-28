@@ -23,6 +23,7 @@ signal finished_loading(scene: Node, data: Dictionary)
 
 ## @experimental:
 ## Use with loading screens, for scene activation (i.e making scene visible or activating certain game logic)
+@warning_ignore("unused_signal")
 signal loading_activated()
 
 ## Tracks if composer finished setting itself up
