@@ -21,7 +21,8 @@ signal updated_loading(path: String, progress: int)
 ## Emitted when the scene has finished loading.
 signal finished_loading(scene: Node, data: Dictionary)
 
-##@experimental: A signal to be used with loading screens, for scene activation (i.e making scene visible or activating certain game logic)
+## @experimental:
+## Use with loading screens, for scene activation (i.e making scene visible or activating certain game logic)
 signal loading_activated()
 
 ## Tracks if composer finished setting itself up
