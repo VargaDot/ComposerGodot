@@ -2,9 +2,8 @@ extends Node
 
 ## A Scene Manager
 ##
-## This script serves as a Scene Manager for managing the loading and unloading of game scenes (levels) in Godot.
-## It handles asynchronous scene loading, displays loading screens, and emits various signals to inform other parts
-## of the game about the loading process.
+## Composer's main function is to replace the current scene with a new scene, while granting
+## the option to have a loading screen.
 
 ## Emitted when Composer has been fully initialised, alongside with its timer.
 signal finished_initialising()
@@ -33,9 +32,9 @@ var has_initialized: bool = false:
 		if has_initialized:
 			finished_initialising.emit()
 
-## Parameter in load_scene function, refer to ResourceLoader's load_threaded_request docs for detail
+## Used in load_scene function, refer to ResourceLoader's load_threaded_request docs for detail
 var is_using_subthreads: bool = false
-## Parameter in load_scene function, refer to ResourceLoader's load_threaded_request docs for detail
+## Used in load_scene function, refer to ResourceLoader's load_threaded_request docs for detail
 var cache_mode: ResourceLoader.CacheMode = ResourceLoader.CACHE_MODE_REUSE
 
 var _is_loading: bool = false
@@ -56,7 +55,7 @@ func _enter_tree() -> void:
 	_root = get_tree().root
 	_setup_timer()
 
-## Starts the loading of the scene from given path.
+## Replaces the current scene with a new scene using a path
 func load_scene(path_to_scene: String, data_to_transfer: Dictionary = {}) -> void:
 	if _is_loading: return
 
@@ -77,7 +76,7 @@ func load_scene(path_to_scene: String, data_to_transfer: Dictionary = {}) -> voi
 	_current_data = data_to_transfer
 	_loading_timer.start()
 
-## Loads and shows the loading screen which it returns after successful instatiation to the SceneTree.
+## Creates a loading screen using a path and adds it to the SceneTree.
 func setup_load_screen(path_to_load_screen: String) -> Node:
 	if _has_loading_screen: return
 
@@ -89,7 +88,7 @@ func setup_load_screen(path_to_load_screen: String) -> Node:
 
 	return _current_load_screen
 
-## Gets rid of the loading screen
+## Removes the loading screen
 func clear_load_screen() -> void:
 	_current_load_screen.queue_free()
 	_current_load_screen = null
