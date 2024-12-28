@@ -32,7 +32,7 @@ func load_screen_fade_out() -> void:
 		Composer.clear_load_screen()
 	)
 
-func loading_finished(scene: Node) -> void:
+func loading_finished(scene: Node, _transferred_data: Dictionary) -> void:
 	_scene = scene
 	Composer.loading_activated.connect(_scene.on_loading_activated)
 	$FinishedLabel.show()

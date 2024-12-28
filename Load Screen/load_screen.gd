@@ -11,7 +11,7 @@ func update_load_screen(progress: int) -> void:
 	$ProgressBar.value = progress
 	print("Progress: ", str(progress))
 
-func loading_finished(scene: Node) -> void:
+func loading_finished(scene: Node, _transferred_data: Dictionary) -> void:
 	_scene = scene
 	Composer.loading_activated.connect(_scene.on_loading_activated)
 

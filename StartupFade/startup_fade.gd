@@ -11,7 +11,7 @@ func _ready() -> void:
 	Composer.finished_loading.connect(on_finished_loading)
 	Composer.load_scene("res://Menu/menu.tscn")
 
-func on_finished_loading(scene: Node) -> void:
+func on_finished_loading(scene: Node, _transferred_data: Dictionary) -> void:
 	_scene = scene
 	Composer.loading_activated.connect(_scene.on_loading_activated)
 	$CanvasLayer/LoadScreen/FinishedLabel.show()
