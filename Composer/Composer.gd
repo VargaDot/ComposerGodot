@@ -33,7 +33,9 @@ var has_initialized: bool = false:
 		if has_initialized:
 			finished_initialising.emit()
 
+## Parameter in load_scene function, refer to ResourceLoader's load_threaded_request docs for detail
 var is_using_subthreads: bool = false
+## Parameter in load_scene function, refer to ResourceLoader's load_threaded_request docs for detail
 var cache_mode: ResourceLoader.CacheMode = ResourceLoader.CACHE_MODE_REUSE
 
 var _is_loading: bool = false
