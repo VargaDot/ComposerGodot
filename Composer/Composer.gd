@@ -125,7 +125,7 @@ func _setup_timer() -> void:
 
 	has_initialized = true
 
-func _on_finished_loading(scene: Node, transferred_data: Dictionary) -> void:
+func _on_finished_loading(scene: Node, _transferred_data: Dictionary) -> void:
 	_root.call_deferred("add_child", scene)
 	get_tree().set_deferred("current_scene", scene)
 
