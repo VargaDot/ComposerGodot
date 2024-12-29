@@ -1,6 +1,6 @@
 extends Control
 
-@onready var fade_load_screen: String = "res://LoadScreenFade/FadeLoadScreen.tscn"
+var fade_load_screen: String = "res://LoadScreenFade/FadeLoadScreen.tscn"
 
 func _ready() -> void:
 	hide()
