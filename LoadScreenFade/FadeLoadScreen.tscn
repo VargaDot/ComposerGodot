@@ -40,13 +40,11 @@ _data = {
 "RESET": SubResource("Animation_lo41o")
 }
 
-[node name="FadeLoadScreen" type="Node2D"]
+[node name="FadeLoadScreen" type="CanvasLayer"]
+layer = 100
 script = ExtResource("1_3b66p")
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-layer = 100
-
-[node name="LoadScreen" type="Control" parent="CanvasLayer"]
+[node name="LoadScreen" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -54,7 +52,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="FadeRect" type="ColorRect" parent="CanvasLayer/LoadScreen"]
+[node name="FadeRect" type="ColorRect" parent="LoadScreen"]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -64,7 +62,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 1)
 
-[node name="FinishedLabel" type="Label" parent="CanvasLayer/LoadScreen"]
+[node name="FinishedLabel" type="Label" parent="LoadScreen"]
 visible = false
 layout_mode = 1
 anchors_preset = 8
@@ -80,7 +78,7 @@ grow_horizontal = 2
 grow_vertical = 2
 text = "Press 'ENTER' to continue..."
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="CanvasLayer/LoadScreen/FinishedLabel"]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="LoadScreen/FinishedLabel"]
 libraries = {
 "": SubResource("AnimationLibrary_hco40")
 }

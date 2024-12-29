@@ -40,13 +40,11 @@ _data = {
 "RESET": SubResource("Animation_lo41o")
 }
 
-[node name="Node2D" type="Node2D"]
+[node name="LoadScreen" type="CanvasLayer"]
+layer = 100
 script = ExtResource("1_x6cf3")
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-layer = 100
-
-[node name="LoadScreen" type="Control" parent="CanvasLayer"]
+[node name="LoadScreen" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -54,7 +52,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ProgressBar" type="ProgressBar" parent="CanvasLayer/LoadScreen"]
+[node name="ProgressBar" type="ProgressBar" parent="LoadScreen"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -68,7 +66,7 @@ offset_bottom = 13.5
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="FinishedLabel" type="Label" parent="CanvasLayer/LoadScreen"]
+[node name="FinishedLabel" type="Label" parent="LoadScreen"]
 visible = false
 layout_mode = 1
 anchors_preset = 8
@@ -84,7 +82,7 @@ grow_horizontal = 2
 grow_vertical = 2
 text = "Press 'ENTER' to continue..."
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="CanvasLayer/LoadScreen/FinishedLabel"]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="LoadScreen/FinishedLabel"]
 libraries = {
 "": SubResource("AnimationLibrary_hco40")
 }

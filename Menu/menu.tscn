@@ -2,20 +2,16 @@
 
 [ext_resource type="Script" path="res://Menu/menu.gd" id="1_7uxkb"]
 
-[node name="Menu" type="Node2D"]
-script = ExtResource("1_7uxkb")
-
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-
-[node name="Control" type="Control" parent="CanvasLayer"]
+[node name="Menu" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_7uxkb")
 
-[node name="Label" type="Label" parent="CanvasLayer/Control"]
+[node name="Label" type="Label" parent="."]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -24,7 +20,7 @@ grow_horizontal = 2
 text = "Main Menu Test"
 horizontal_alignment = 1
 
-[node name="MenuButton" type="Button" parent="CanvasLayer/Control"]
+[node name="MenuButton" type="Button" parent="."]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -40,7 +36,7 @@ grow_vertical = 2
 focus_mode = 0
 text = "Go to Game"
 
-[node name="FadeMenuButton" type="Button" parent="CanvasLayer/Control"]
+[node name="FadeMenuButton" type="Button" parent="."]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -56,5 +52,5 @@ grow_vertical = 2
 focus_mode = 0
 text = "Go to Game with Fade"
 
-[connection signal="pressed" from="CanvasLayer/Control/MenuButton" to="." method="_on_menu_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/Control/FadeMenuButton" to="." method="_on_fade_menu_button_pressed"]
+[connection signal="pressed" from="MenuButton" to="." method="_on_menu_button_pressed"]
+[connection signal="pressed" from="FadeMenuButton" to="." method="_on_fade_menu_button_pressed"]
