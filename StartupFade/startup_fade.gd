@@ -7,11 +7,11 @@ func _ready() -> void:
 
 	if not Composer.has_initialized:
 		await Composer.finished_initialising
-	print("load")
+
 	Composer.finished_loading.connect(on_finished_loading)
 	Composer.load_scene("res://Menu/menu.tscn")
 
-func on_finished_loading(scene: Node, _transferred_data: Dictionary) -> void:
+func on_finished_loading(scene: Node) -> void:
 	_scene = scene
 	Composer.loading_activated.connect(_scene.on_loading_activated)
 	$FinishedLabel.show()

@@ -32,13 +32,12 @@ func load_screen_fade_out() -> void:
 		Composer.clear_load_screen()
 	)
 
-func loading_finished(scene: Node, _transferred_data: Dictionary) -> void:
+func loading_finished(scene: Node) -> void:
 	_scene = scene
 	Composer.loading_activated.connect(_scene.on_loading_activated)
 	$FinishedLabel.show()
 	$FinishedLabel/AnimationPlayer.play("FadeInOut")
 	set_process(true)
-	print("Finished")
 
 func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("activate"):
