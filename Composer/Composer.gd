@@ -20,7 +20,7 @@ signal updated_loading(path: String, progress: int)
 ## Emitted when the scene has finished loading.
 signal finished_loading(scene: Node, data: Dictionary)
 
-## Use with loading screens, for scene activation (i.e making scene visible or activating certain game logic)
+## Use with loading screens, for scene activation (i.e making scene visible or activating certain game logic).
 @warning_ignore("unused_signal")
 signal loading_activated()
 
@@ -32,10 +32,10 @@ var has_initialized: bool = false:
 			finished_initialising.emit()
 
 ## Enables or disables the use of subthreads when loading scenes,
-## refer to [method ResourceLoader.load_threaded_request] for detail
+## refer to [method ResourceLoader.load_threaded_request] for detail.
 var is_using_subthreads: bool = false
 ## Sets the cache mode of loaded scenes,
-## refer to [method ResourceLoader.load_threaded_request] for detail
+## refer to [method ResourceLoader.load_threaded_request] for detail.
 var cache_mode: ResourceLoader.CacheMode = ResourceLoader.CACHE_MODE_REUSE
 
 var _is_loading: bool = false
@@ -80,7 +80,7 @@ func load_scene(path_to_scene: String, data_to_transfer: Dictionary = {}) -> voi
 	_loading_timer.start()
 
 ## Creates a loading screen using a path and adds it to the SceneTree.
-## Returns an instance of it for usage with signals
+## Returns an instance of it for usage with signals.
 func setup_load_screen(path_to_load_screen: String) -> Node:
 	if _has_loading_screen: return
 
@@ -92,7 +92,7 @@ func setup_load_screen(path_to_load_screen: String) -> Node:
 
 	return _current_load_screen
 
-## Gets rid of the loading screen
+## Gets rid of the loading screen.
 func clear_load_screen() -> void:
 	_current_load_screen.queue_free()
 	_current_load_screen = null
