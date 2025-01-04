@@ -56,6 +56,7 @@ var _has_loading_screen: bool = false
 var _loading_timer: Timer = null
 var _current_loading_path: String = ""
 var _current_load_screen: Node = null
+var _current_scene: Node = null
 
 var _current_data: Dictionary = {}
 
@@ -84,7 +85,9 @@ func load_scene(path_to_scene: String, data_to_transfer: Dictionary = {}) -> voi
 
 	if _loading_timer == null: _setup_timer()
 
-	get_tree().current_scene.queue_free()
+	if _current_scene:
+		_current_scene.queue_free()
+		_current_scene = null
 
 	_current_loading_path = path_to_scene
 	_current_data = data_to_transfer
@@ -143,7 +146,7 @@ func _on_finished_loading(scene: Node) -> void:
 	scene.set_meta("transferred_data", _current_data)
 
 	root.call_deferred("add_child", scene)
-	get_tree().set_deferred("current_scene", scene)
+	_current_scene = scene
 
 	_current_loading_path = ""
 	_is_loading = false
