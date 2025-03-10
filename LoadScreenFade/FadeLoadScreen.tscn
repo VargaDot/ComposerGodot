@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://c8lb8uqvt1i1g"]
 
-[ext_resource type="Script" path="res://LoadScreenFade/fade_load_screen.gd" id="1_3b66p"]
+[ext_resource type="Script" uid="uid://cdqqb5nj264tg" path="res://LoadScreenFade/fade_load_screen.gd" id="1_3b66p"]
 
 [sub_resource type="Animation" id="Animation_jqe41"]
 resource_name = "FadeInOut"
@@ -36,8 +36,8 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_hco40"]
 _data = {
-"FadeInOut": SubResource("Animation_jqe41"),
-"RESET": SubResource("Animation_lo41o")
+&"FadeInOut": SubResource("Animation_jqe41"),
+&"RESET": SubResource("Animation_lo41o")
 }
 
 [node name="FadeLoadScreen" type="CanvasLayer"]
