@@ -7,6 +7,8 @@ on:
       - main
     paths:
       - 'Composer/Composer.gd'
+      - 'README.md'
+      - 'LICENSE.md'
 
   workflow_dispatch:
     inputs:
