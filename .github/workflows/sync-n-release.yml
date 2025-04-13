@@ -75,18 +75,37 @@ jobs:
     needs: setup
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout published branch
-        uses: actions/checkout@v3
-        with:
-          ref: published
+    - name: Checkout main branch
+      uses: actions/checkout@v3
+      with:
+        ref: main  # Start by checking out the main branch
 
-      - name: Copy Composer.gd from main to published
-        run: |
-          git fetch origin main
-          git checkout origin/main -- Composer/Composer.gd
-          git add Composer/Composer.gd
-          git commit -m "Sync Composer.gd from main to published" || echo "No changes to commit"
-          git push origin published
+    - name: Checkout published branch or create if not exists
+      run: |
+        git fetch origin published || git checkout -b published  # Create 'published' if it doesn't exist
+        git checkout published  # Switch to the published branch
+
+    - name: Sync Composer.gd from main to published
+      run: |
+        git checkout origin/main -- Composer/Composer.gd
+        git add Composer/Composer.gd
+        git commit -m "Sync Composer.gd from main to published" || echo "No changes to commit"
+    
+    - name: Sync README.md from main to published
+      run: |
+        git checkout origin/main -- README.md
+        git add README.md
+        git commit -m "Sync README.md from main to published" || echo "No changes to commit"
+
+    - name: Sync LICENSE.md from main to published
+      run: |
+        git checkout origin/main -- LICENSE.md
+        git add LICENSE.md
+        git commit -m "Sync LICENSE.md from main to published" || echo "No changes to commit"
+
+    - name: Push changes to published branch
+      run: |
+        git push origin published
 
   release:
     needs: [setup, sync_file]
