@@ -97,4 +97,10 @@ is_using_subthreads: bool = false
 cache_mode: ResourceLoader.CacheMode = ResourceLoader.CACHE_MODE_REUSE
 ```
 + Sets the cache mode of loaded scenes. Learn more about this [here](https://docs.godotengine.org/en/stable/classes/class_resourceloader.html#enum-resourceloader-cachemode). Default is CacheMode.Reuse.
+  
+**unpack_data**
+```
+unpack_data: bool = true
+```
++ Changes how data is unpacked during the transfer process. If true, each key in dictionary is added as a separate metadata. If false, the whole dictionary is added as one metadata with the name being "transferred_data".
 </details>
