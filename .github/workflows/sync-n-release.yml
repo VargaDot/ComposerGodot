@@ -8,7 +8,7 @@ on:
     paths:
       - 'Composer/Composer.gd'
       - 'README.md'
-      - 'LICENSE.md'
+      - 'LICENSE'
 
   workflow_dispatch:
     inputs:
@@ -99,11 +99,11 @@ jobs:
         git add README.md
         git commit -m "Sync README.md from main to published" || echo "No changes to commit"
 
-    - name: Sync LICENSE.md from main to published
+    - name: Sync LICENSE from main to published
       run: |
-        git checkout origin/main -- LICENSE.md
-        git add LICENSE.md
-        git commit -m "Sync LICENSE.md from main to published" || echo "No changes to commit"
+        git checkout origin/main -- LICENSE
+        git add LICENSE
+        git commit -m "Sync LICENSE from main to published" || echo "No changes to commit"
 
     - name: Push changes to published branch
       run: |
