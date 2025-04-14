@@ -37,6 +37,10 @@ var is_using_subthreads: bool = false
 ## Sets the cache mode of loaded scenes,
 ## refer to [method ResourceLoader.load_threaded_request] for detail.
 var cache_mode: ResourceLoader.CacheMode = ResourceLoader.CACHE_MODE_REUSE
+## Unpacks the data passed in through data_to_transfer,
+## by default the data is added as meta value by iterating through keys of dictionary.
+## If set to false, it will just include one giant meta value with the name of "transferred_data"
+var unpack_data: bool = true
 
 ## Time value for the timer responsible for checking the status of loading. Default value is 0.1s.
 ## This should not be changed unless absolutely necessary.
@@ -58,7 +62,7 @@ var _current_loading_path: String = ""
 var _current_load_screen: Node = null
 var _current_scene: Node = null
 
-var _current_data: Dictionary = {}
+var _current_data: Dictionary[String, Variant] = {}
 
 func _enter_tree() -> void:
 	invalid_scene.connect(_on_invalid_scene)
@@ -71,7 +75,7 @@ func _enter_tree() -> void:
 ## Replaces the current scene with a new scene using a path,
 ## can also be used for transferring data between scenes with the optional data_to_transfer
 ## parameter. Data will be stored as new scene metadata, named "transferred_data".
-func load_scene(path_to_scene: String, data_to_transfer: Dictionary = {}) -> void:
+func load_scene(path_to_scene: String, data_to_transfer: Dictionary[String, Variant] = {}) -> void:
 	if _is_loading: return
 
 	if !has_initialized: await finished_initialising
@@ -143,7 +147,11 @@ func _setup_timer() -> void:
 	has_initialized = true
 
 func _on_finished_loading(scene: Node) -> void:
-	scene.set_meta("transferred_data", _current_data)
+	if unpack_data:
+		for key: String in _current_data:
+			scene.set_meta(key, _current_data[key])
+	else:
+		scene.set_meta("transferred_data", _current_data)
 
 	root.call_deferred("add_child", scene)
 	_current_scene = scene
