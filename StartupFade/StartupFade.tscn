@@ -69,5 +69,5 @@ text = "Press 'ENTER' to continue..."
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="FinishedLabel"]
 libraries = {
-"": SubResource("AnimationLibrary_hco40")
+&"": SubResource("AnimationLibrary_hco40")
 }
