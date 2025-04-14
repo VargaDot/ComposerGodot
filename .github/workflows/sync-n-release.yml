@@ -1,0 +1,137 @@
+name: Sync Composer and Create Release
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+    paths:
+      - 'Composer/Composer.gd'
+      - 'README.md'
+      - 'LICENSE.md'
+
+  workflow_dispatch:
+    inputs:
+      create_github_release:
+        description: 'Creates GitHub release from latest Composer in Published'
+        default: 'true'
+
+jobs:
+  setup:
+    if: github.event.pull_request.merged == true || github.event.inputs.create_github_release == 'true'
+    runs-on: ubuntu-latest
+    outputs:
+      new_tag: ${{ steps.versioning.outputs.new_tag }}
+      latest_tag: ${{ steps.versioning.outputs.latest_tag }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Extract PR labels
+        if: github.event_name == 'pull_request'
+        id: labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const labels = context.payload.pull_request?.labels.map(label => label.name) || [];
+            core.setOutput("labels", labels.join(","));
+
+      - name: Determine version bump type
+        id: bump
+        run: |
+          labels="${{ steps.labels.outputs.labels || 'version: patch' }}"
+          echo "PR labels: $labels"
+          if [[ "$labels" == *"version: major"* ]]; then
+            bump="major"
+          elif [[ "$labels" == *"version: minor"* ]]; then
+            bump="minor"
+          else
+            bump="patch"
+          fi
+          echo "bump=$bump" >> $GITHUB_OUTPUT
+
+      - name: Generate new version tag
+        id: versioning
+        run: |
+          git fetch --tags
+          latest_tag=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null || echo "v0.0.0")
+          echo "latest_tag=$latest_tag" >> $GITHUB_OUTPUT
+
+          if [[ "$latest_tag" =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+            major=${BASH_REMATCH[1]}
+            minor=${BASH_REMATCH[2]}
+            patch=${BASH_REMATCH[3]}
+            case "${{ steps.bump.outputs.bump }}" in
+              major) major=$((major + 1)); minor=0; patch=0 ;;
+              minor) minor=$((minor + 1)); patch=0 ;;
+              patch|*) patch=$((patch + 1)) ;;
+            esac
+            new_tag="v$major.$minor.$patch"
+          else
+            new_tag="v1.0.0"
+          fi
+
+          echo "new_tag=$new_tag" >> $GITHUB_OUTPUT
+
+  sync_file:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout main branch
+      uses: actions/checkout@v3
+      with:
+        ref: main  # Start by checking out the main branch
+
+    - name: Checkout published branch or create if not exists
+      run: |
+        git fetch origin published || git checkout -b published  # Create 'published' if it doesn't exist
+        git checkout published  # Switch to the published branch
+
+    - name: Sync Composer.gd from main to published
+      run: |
+        git checkout origin/main -- Composer/Composer.gd
+        git add Composer/Composer.gd
+        git commit -m "Sync Composer.gd from main to published" || echo "No changes to commit"
+    
+    - name: Sync README.md from main to published
+      run: |
+        git checkout origin/main -- README.md
+        git add README.md
+        git commit -m "Sync README.md from main to published" || echo "No changes to commit"
+
+    - name: Sync LICENSE.md from main to published
+      run: |
+        git checkout origin/main -- LICENSE.md
+        git add LICENSE.md
+        git commit -m "Sync LICENSE.md from main to published" || echo "No changes to commit"
+
+    - name: Push changes to published branch
+      run: |
+        git push origin published
+
+  release:
+    needs: [setup, sync_file]
+    if: github.event.pull_request.merged == true || github.event.inputs.create_github_release == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout published branch
+        uses: actions/checkout@v3
+        with:
+          ref: published
+
+      - name: Generate release notes
+        id: notes
+        run: |
+          git fetch --tags
+          latest_tag=${{ needs.setup.outputs.latest_tag }}
+          commits=$(git log "$latest_tag"..origin/main --oneline || echo "No new commits.")
+          echo "release_notes=### Changes since $latest_tag:\n\n$commits" >> $GITHUB_ENV
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.setup.outputs.new_tag }}
+          name: Release ${{ needs.setup.outputs.new_tag }}
+          body: ${{ env.release_notes }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
