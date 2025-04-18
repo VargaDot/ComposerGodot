@@ -26,6 +26,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Create Composer zip
+        run: |
+          mkdir -p composer-release
+          cp Composer/Composer.gd README.md LICENSE composer-release/
+          cd composer-release
+          zip -r ../Composer.zip .
+
       - name: Create latest release
       # Creates a release under the "latest" tag and releases these files.
         uses: marvinpinto/action-automatic-releases@latest
@@ -35,6 +42,4 @@ jobs:
           prerelease: false
           title: "Composer"
           files: |
-            Composer/Composer.gd
-            README.md
-            LICENSE
+            Composer.zip
