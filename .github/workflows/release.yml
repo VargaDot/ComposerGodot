@@ -1,0 +1,34 @@
+name: Release Composer
+
+on:
+  # Activates when a push targets the files under "paths" in main.
+  push:
+    branches:
+      - main
+    paths:
+      - 'Composer/Composer.gd'
+      - 'README.md'
+      - 'LICENSE'
+
+  # Enables manual trigger from the actions tab at the repository.
+  workflow_dispatch:
+    inputs:
+      create_release:
+        description: 'Create a new Composer release'
+        default: 'true'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      # Creates a release under the "latest" tag and releases these files.
+      - uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: false
+          title: "Composer"
+          files: |
+            Composer/Composer.gd
+            README.md
+            LICENSE.txt
