@@ -10,14 +10,15 @@ config_version=5
 
 [application]
 
-config/name="ComposerRevamp"
+config/name="ComposerGodot"
+config/version="1.0.0"
 run/main_scene="res://Startup/Startup.tscn"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"
 
 [autoload]
 
-Composer="*res://Composer/Composer.gd"
+Composer="*res://addons/composer_godot/Composer.gd"
 
 [debug]
 
@@ -26,6 +27,10 @@ gdscript/warnings/untyped_declaration=2
 [dotnet]
 
 project/assembly_name="ComposerRevamp"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/composer_godot/plugin.cfg")
 
 [input]
 
