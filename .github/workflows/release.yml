@@ -6,7 +6,9 @@ on:
     branches:
       - main
     paths:
-      - 'Composer/Composer.gd'
+      - 'addons/composer_godot/plugin.cfg'
+      - 'addons/composer_godot/Composer.gd'
+      - 'addons/composer_godot/plugin_composer.gd'
       - 'README.md'
       - 'LICENSE'
 
