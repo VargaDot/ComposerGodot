@@ -31,7 +31,7 @@ jobs:
       - name: Create Composer zip
         run: |
           mkdir -p composer-release
-          cp Composer/Composer.gd README.md LICENSE composer-release/
+          cp addons/composer_godot/plugin.cfg addons/composer_godot/plugin_composer.gd addons/composer_godot/Composer.gd README.md LICENSE composer-release/
           cd composer-release
           zip -r ../Composer.zip .
 
