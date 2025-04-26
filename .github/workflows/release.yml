@@ -9,6 +9,7 @@ on:
       - 'addons/composer_godot/plugin.cfg'
       - 'addons/composer_godot/Composer.gd'
       - 'addons/composer_godot/plugin_composer.gd'
+      - 'addons/composer_godot/icon.png'
       - 'README.md'
       - 'LICENSE'
 
@@ -34,6 +35,7 @@ jobs:
           cp addons/composer_godot/plugin.cfg composer-release/addons/composer_godot/
           cp addons/composer_godot/Composer.gd composer-release/addons/composer_godot/
           cp addons/composer_godot/plugin_composer.gd composer-release/addons/composer_godot/
+          cp addons/composer_godot/icon.png composer-release/addons/composer_godot/
           cp README.md LICENSE composer-release/
           cd composer-release
           zip -r ../Composer.zip .
