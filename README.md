@@ -4,7 +4,7 @@ A lightweight scene manager library for [Godot](https://godotengine.org/), writt
 
 ## Getting Started
 
-Download the repo and copy the Composer.gd file to your project. You will need to add this script as an [Autoload](https://docs.godotengine.org/en/stable/tutorials/scripting/singletons_autoload.html).
+Download the latest release and copy the addons folder to your project. Then, enable the ComposerGodot addon in the [Project Settings](https://docs.godotengine.org/en/stable/tutorials/plugins/editor/installing_plugins.html#enabling-a-plugin).
 
 <details>
 
