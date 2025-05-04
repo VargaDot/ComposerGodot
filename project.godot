@@ -14,7 +14,11 @@ config/name="ComposerGodot"
 config/version="1.0.0"
 run/main_scene="res://Startup/Startup.tscn"
 config/features=PackedStringArray("4.4", "GL Compatibility")
+<<<<<<< HEAD
 config/icon="uid://du1lnunp7xi0s"
+=======
+config/icon="uid://cmn68xs8lpgoo"
+>>>>>>> 909a8b5b3e79c3a0f0d82284b786460b128196f1
 
 [autoload]
 
